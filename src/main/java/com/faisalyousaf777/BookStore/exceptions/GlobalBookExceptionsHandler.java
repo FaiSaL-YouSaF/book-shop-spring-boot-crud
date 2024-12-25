@@ -1,4 +1,4 @@
-package com.faisalyousaf777.BookShop.BookExceptions;
+package com.faisalyousaf777.BookStore.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +42,7 @@ public class GlobalBookExceptionsHandler {
 	@ExceptionHandler(value = {BookAlreadyExistsException.class})
 	public ResponseEntity<Object> bookAlreadyExistsExceptionHandler(BookAlreadyExistsException ex) {
 
-		HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+		HttpStatus badRequest = HttpStatus.CONFLICT;
 
 		return new ResponseEntity<>(
 				new BookException(

@@ -1,10 +1,11 @@
-package com.faisalyousaf777.BookShop.Service;
+package com.faisalyousaf777.BookStore.service;
 
-import com.faisalyousaf777.BookShop.BookExceptions.BookAlreadyExistsException;
-import com.faisalyousaf777.BookShop.BookExceptions.BookNotFoundException;
-import com.faisalyousaf777.BookShop.BookExceptions.BookRecordsNotFoundException;
-import com.faisalyousaf777.BookShop.Entity.Book;
-import com.faisalyousaf777.BookShop.Repository.BookRepository;
+import com.faisalyousaf777.BookStore.exceptions.BookAlreadyExistsException;
+import com.faisalyousaf777.BookStore.exceptions.BookNotFoundException;
+import com.faisalyousaf777.BookStore.exceptions.BookRecordsNotFoundException;
+import com.faisalyousaf777.BookStore.entity.Book;
+import com.faisalyousaf777.BookStore.repository.BookRepository;
+import com.faisalyousaf777.BookStore.service.impl.BookServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,13 +22,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class BookServiceUnitTests {
+class BookServiceImplUnitTests {
 	
 	@Mock
 	private BookRepository bookRepository;
 	
 	@InjectMocks
-	private BookService bookService;
+	private BookServiceImpl bookServiceImpl;
 	
 	@AfterEach
 	void tearDown() {
@@ -38,56 +39,56 @@ class BookServiceUnitTests {
 	long bookId = mockedBook.getBookId();
 	
 	@Test
-	@DisplayName("GetBookByBookTitle- Succeeds When Book With Given Title Exists")
-	void testGetBookByBookTitle_bookExists() {
-		String bookTitle = mockedBook.getBookTitle();
+	@DisplayName("GetBookByTitle- Succeeds When Book With Given Title Exists")
+	void testGetBookByTitle_bookExists() {
+		String title = mockedBook.getTitle();
 		
-		Mockito.when(bookRepository.findByBookTitle(bookTitle)).thenReturn(Optional.of(mockedBook));
-		Book foundBook = bookService.getBookByBookTitle(bookTitle);
+		Mockito.when(bookRepository.findByTitle(title)).thenReturn(Optional.of(mockedBook));
+		Book foundBook = bookServiceImpl.getBookByTitle(title);
 		
 		assertNotNull(foundBook);
 		assertEquals(mockedBook, foundBook);
 	}
 	
 	@Test
-	@DisplayName("GetBookByBookTitle- Fails When Book With Given Title Does Not Exists")
-	void testGetBookByBookTitle_bookDoesNotExists() {
-		String bookTitle = Mockito.anyString();
+	@DisplayName("GetBookByTitle- Fails When Book With Given Title Does Not Exists")
+	void testGetBookByTitle_bookDoesNotExists() {
+		String title = Mockito.anyString();
 		
-		assertThatThrownBy(() -> bookService.getBookByBookTitle(bookTitle))
+		assertThatThrownBy(() -> bookServiceImpl.getBookByTitle(title))
 				.isInstanceOf(BookNotFoundException.class)
-				.hasMessageContaining("Book with the Title: "+bookTitle+" does not exists.");
+				.hasMessageContaining("Invalid Title : Book with the title : "+title+" does not exists.");
 	}
 	
 	@Test
 	@DisplayName("AddBook - Succeeds When Valid Book is Provided")
-	void testAddBook_succeedsWhenValidBookIsProvided() {
-		bookService.addBook(mockedBook);
+	void testSaveBook_succeedsWhenValidBookIsProvided() {
+		bookServiceImpl.saveBook(mockedBook);
 		
 		Mockito.verify(bookRepository).save(mockedBook);
 	}
 	
 	@Test
 	@DisplayName("AddBook - Fails When Book ID Exists Already")
-	void testAddBook_failsWhenBookIdExistsAlready() {
+	void testSaveBook_failsWhenBookIdExistsAlready() {
 		Mockito.when(bookRepository.findById(bookId)).thenReturn(Optional.of(mockedBook));
 		
-		assertThatThrownBy(() -> bookService.addBook(mockedBook))
+		assertThatThrownBy(() -> bookServiceImpl.saveBook(mockedBook))
 				.isInstanceOf(BookAlreadyExistsException.class)
-				.hasMessageContaining("Book with the ID "+bookId+" exists already.");
+				.hasMessageContaining("Invalid ID : Book with the ID "+bookId+" exists already.");
 		Mockito.verify(bookRepository, Mockito.never()).save(mockedBook);
 	}
 	
 	@Test
 	@DisplayName("AddBook - Fails When Book Title Exists Already")
-	void testAddBook_failsWhenBookTitleExistsAlready() {
-		String bookTitle = mockedBook.getBookTitle();
+	void testSaveBook_failsWhenTitleExistsAlready() {
+		String title = mockedBook.getTitle();
 		
-		Mockito.when(bookRepository.findByBookTitle(bookTitle)).thenReturn(Optional.of(mockedBook));
+		Mockito.when(bookRepository.findByTitle(title)).thenReturn(Optional.of(mockedBook));
 		
-		assertThatThrownBy(() -> bookService.addBook(mockedBook))
+		assertThatThrownBy(() -> bookServiceImpl.saveBook(mockedBook))
 				.isInstanceOf(BookAlreadyExistsException.class)
-				.hasMessageContaining("Book with the Title: "+bookTitle+" exists already.");
+				.hasMessageContaining("Invalid Title : Book with the title : "+title+" exists already.");
 		Mockito.verify(bookRepository, Mockito.never()).save(mockedBook);
 	}
 	
@@ -96,15 +97,15 @@ class BookServiceUnitTests {
 	void testGetBookById_bookExists() {
 		Mockito.when(bookRepository.findById(mockedBook.getBookId())).thenReturn(Optional.of(mockedBook));
 		
-		assertEquals(mockedBook, bookService.getBookById(mockedBook.getBookId()));
+		assertEquals(mockedBook, bookServiceImpl.getBookById(mockedBook.getBookId()));
 	}
 	
 	@Test
 	@DisplayName("GetBookById - Fails When Book Does Not Exists")
 	void testGetBookById_bookDoesNotExists() throws BookNotFoundException {
-		assertThatThrownBy(() -> bookService.getBookById(bookId))
+		assertThatThrownBy(() -> bookServiceImpl.getBookById(bookId))
 				.isInstanceOf(BookNotFoundException.class)
-				.hasMessageContaining("Book with the ID "+bookId+" does not exist.");
+				.hasMessageContaining("Invalid ID : Book with the ID "+bookId+" does not exist.");
 	}
 	
 	@Test
@@ -116,7 +117,7 @@ class BookServiceUnitTests {
 		);
 		
 		Mockito.when(bookRepository.findAll()).thenReturn(mockedBookList);
-		List<Book> foundBookList = bookService.getAllBooks();
+		List<Book> foundBookList = bookServiceImpl.getAllBooks();
 		
 		assertNotNull(foundBookList);
 		assertEquals(mockedBookList, foundBookList);
@@ -126,9 +127,9 @@ class BookServiceUnitTests {
 	void testGetAllBooks_booksDoesNotExist() {
 //		Mockito.when(bookRepository.findAll()).thenReturn(Collections.emptyList());
 		
-		assertThatThrownBy(() -> bookService.getAllBooks())
+		assertThatThrownBy(() -> bookServiceImpl.getAllBooks())
 				.isInstanceOf(BookRecordsNotFoundException.class)
-				.hasMessageContaining("Book Records are not Found in Database!");
+				.hasMessageContaining("No book records found in the database. Please add books to view the list.");
 	}
 	
 	@Test
@@ -137,7 +138,7 @@ class BookServiceUnitTests {
 		Book updatedBook = new Book(bookId,"Python", "Automate the boring stuff with Python", 5);
 		
 		Mockito.when(bookRepository.findById(bookId)).thenReturn(Optional.of(mockedBook));
-		bookService.updateBook(bookId, updatedBook);
+		bookServiceImpl.updateBook(bookId, updatedBook);
 		
 		Mockito.verify(bookRepository).save(updatedBook);
 	}
@@ -146,9 +147,9 @@ class BookServiceUnitTests {
 	@DisplayName("Update Book - Fails When Book With Given ID Does Not Exist")
 	void testUpdateBook_bookDoesNotExist() {
 //		Book updatedBook = new Book("Java", "Java for beginners", 5);
-		assertThatThrownBy(() -> bookService.updateBook(bookId, mockedBook))
+		assertThatThrownBy(() -> bookServiceImpl.updateBook(bookId, mockedBook))
 				.isInstanceOf(BookNotFoundException.class)
-				.hasMessageContaining("Book with the ID " +bookId+" does not exist.");
+				.hasMessageContaining("Invalid ID : Book with the ID " +bookId+" does not exist.");
 		Mockito.verify(bookRepository, Mockito.never()).save(mockedBook);
 	}
 	
@@ -156,15 +157,15 @@ class BookServiceUnitTests {
 	void testDeleteBookById_bookDeleted() {
 		Mockito.when(bookRepository.findById(bookId)).thenReturn(Optional.of(mockedBook));
 		
-		bookService.deleteBookById(bookId);
+		bookServiceImpl.deleteBookById(bookId);
 		Mockito.verify(bookRepository).deleteById(bookId);
 	}
 	
 	@Test
 	void testDeleteBookById_bookDoesNotExist() {
-		assertThatThrownBy(() -> bookService.deleteBookById(bookId))
+		assertThatThrownBy(() -> bookServiceImpl.deleteBookById(bookId))
 				.isInstanceOf(BookNotFoundException.class)
-				.hasMessageContaining("Book with the ID " +bookId+" does not exist.");
+				.hasMessageContaining("Invalid ID : Book with the ID " +bookId+" does not exist.");
 		Mockito.verify(bookRepository, Mockito.never()).deleteById(bookId);
 	}
 }

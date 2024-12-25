@@ -1,4 +1,4 @@
-package com.faisalyousaf777.BookShop.BookExceptions;
+package com.faisalyousaf777.BookStore.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

@@ -1,7 +1,7 @@
-package com.faisalyousaf777.BookShop.Controller;
+package com.faisalyousaf777.BookStore.controller;
 
-import com.faisalyousaf777.BookShop.Entity.Book;
-import com.faisalyousaf777.BookShop.Repository.BookRepository;
+import com.faisalyousaf777.BookStore.entity.Book;
+import com.faisalyousaf777.BookStore.repository.BookRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureTestDatabase
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class BookControllerIntegrationTests {
+class ITBookController {
 	
 	@Autowired
 	private MockMvc mockMvc;
@@ -56,28 +56,28 @@ class BookControllerIntegrationTests {
 	
 	@Test
 	@Order(1)
-	@DisplayName("GetBookByBookTitle - Succeeds When Book Exists")
-	void testGetBookByBookTitle_succeedsWhenBookExists() throws Exception {
-		String bookTitle = savedBook1.getBookTitle();
+	@DisplayName("GetBookByTitle - Succeeds When Book Exists")
+	void testGetBookByTitle_succeedsWhenBookExists() throws Exception {
+		String title = savedBook1.getTitle();
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("/get-by-book-title/"+bookTitle))
+		mockMvc.perform(MockMvcRequestBuilders.get("/title/"+title))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.bookId").value(savedBook1.getBookId()))
-				.andExpect(jsonPath("$.bookTitle").value(savedBook1.getBookTitle()))
-				.andExpect(jsonPath("$.bookSummary").value(savedBook1.getBookSummary()))
-				.andExpect(jsonPath("$.bookRating").value(savedBook1.getBookRating()));
+				.andExpect(jsonPath("$.title").value(savedBook1.getTitle()))
+				.andExpect(jsonPath("$.bookSummary").value(savedBook1.getSummary()))
+				.andExpect(jsonPath("$.bookRating").value(savedBook1.getRating()));
 	}
 	
 	@Test
 	@Order(2)
-	@DisplayName("GetBookByBookTitle - Fails When Book Does Not Exists")
-	void testGetBookByBookTitle_failsWhenBookDoesNotExists() throws Exception {
-		String bookTitle = "Java";
+	@DisplayName("GetBookByTitle - Fails When Book Does Not Exists")
+	void testGetBookByTitle_failsWhenBookDoesNotExists() throws Exception {
+		String title = "Java";
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("/get-by-book-title/"+bookTitle))
+		mockMvc.perform(MockMvcRequestBuilders.get("/title/"+title))
 				.andExpect(status().isNotFound())
-				.andExpect(content().string("Book with the Title: " + bookTitle + " does not exists."));
+				.andExpect(content().string("Invalid Title : Book with the title : " + title + " does not exists."));
 	}
 	
 	
@@ -87,13 +87,13 @@ class BookControllerIntegrationTests {
 	void testGetBookById_bookExists() throws Exception {
 		long savedBookId = 1L;
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("/get-book-by-id/"+savedBookId))
+		mockMvc.perform(MockMvcRequestBuilders.get(String.valueOf(savedBookId)))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.bookId").value(savedBook1.getBookId()))
-				.andExpect(jsonPath("$.bookTitle").value(savedBook1.getBookTitle()))
-				.andExpect(jsonPath("$.bookSummary").value(savedBook1.getBookSummary()))
-				.andExpect(jsonPath("$.bookRating").value(savedBook1.getBookRating()));
+				.andExpect(jsonPath("$.title").value(savedBook1.getTitle()))
+				.andExpect(jsonPath("$.bookSummary").value(savedBook1.getSummary()))
+				.andExpect(jsonPath("$.bookRating").value(savedBook1.getRating()));
 	}
 	
 	@Test
@@ -102,9 +102,9 @@ class BookControllerIntegrationTests {
 	void testGetBookById_bookDoesNotExists() throws Exception {
 		long unSavedBookId = unSavedBook4.getBookId();
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("/get-book-by-id/"+unSavedBookId))
+		mockMvc.perform(MockMvcRequestBuilders.get(String.valueOf(unSavedBookId)))
 				.andExpect(status().isNotFound())
-				.andExpect(content().string("Book with the ID " + unSavedBookId + " does not exist."));
+				.andExpect(content().string("Invalid ID : Book with the ID " + unSavedBookId + " does not exist."));
 	}
 	
 	
@@ -113,20 +113,20 @@ class BookControllerIntegrationTests {
 	@DisplayName("GetAllBooks - Succeeds When List of Books Exists")
 	void testGetAllBooks_returnsListOfBooks() throws Exception{
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("/all-books"))
+		mockMvc.perform(MockMvcRequestBuilders.get("/"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$[0].bookId").value(savedBook1.getBookId()))
-				.andExpect(jsonPath("$[0].bookTitle").value(savedBook1.getBookTitle()))
-				.andExpect(jsonPath("$[0].bookSummary").value(savedBook1.getBookSummary()))
-				.andExpect(jsonPath("$[0].bookRating").value(savedBook1.getBookRating()))
+				.andExpect(jsonPath("$[0].title").value(savedBook1.getTitle()))
+				.andExpect(jsonPath("$[0].bookSummary").value(savedBook1.getSummary()))
+				.andExpect(jsonPath("$[0].bookRating").value(savedBook1.getRating()))
 				.andExpect(jsonPath("$[1].bookId").value(savedBook2.getBookId()))
-				.andExpect(jsonPath("$[1].bookTitle").value(savedBook2.getBookTitle()))
-				.andExpect(jsonPath("$[1].bookSummary").value(savedBook2.getBookSummary()))
-				.andExpect(jsonPath("$[1].bookRating").value(savedBook2.getBookRating()))
+				.andExpect(jsonPath("$[1].title").value(savedBook2.getTitle()))
+				.andExpect(jsonPath("$[1].bookSummary").value(savedBook2.getSummary()))
+				.andExpect(jsonPath("$[1].bookRating").value(savedBook2.getRating()))
 				.andExpect(jsonPath("$[2].bookId").value(savedBook3.getBookId()))
-				.andExpect(jsonPath("$[2].bookTitle").value(savedBook3.getBookTitle()))
-				.andExpect(jsonPath("$[2].bookSummary").value(savedBook3.getBookSummary()))
-				.andExpect(jsonPath("$[2].bookRating").value(savedBook3.getBookRating()));
+				.andExpect(jsonPath("$[2].title").value(savedBook3.getTitle()))
+				.andExpect(jsonPath("$[2].bookSummary").value(savedBook3.getSummary()))
+				.andExpect(jsonPath("$[2].bookRating").value(savedBook3.getRating()));
 	}
 	
 	@Test
@@ -136,9 +136,9 @@ class BookControllerIntegrationTests {
 		// Need Empty Database to test this method
 		bookRepository.deleteAll();
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("/all-books"))
+		mockMvc.perform(MockMvcRequestBuilders.get("/"))
 						.andExpect(status().isNoContent())
-						.andExpect(content().string("Book Records are not Found in Database!"));
+						.andExpect(content().string("No book records found in the database. Please add books to view the list."));
 	}
 	
 	
@@ -149,7 +149,7 @@ class BookControllerIntegrationTests {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String unSavedBookAsJson = objectMapper.writeValueAsString(unSavedBook4);
 		
-		mockMvc.perform(MockMvcRequestBuilders.post("/add-book")
+		mockMvc.perform(MockMvcRequestBuilders.post("/add")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(unSavedBookAsJson)
 				)
@@ -164,28 +164,28 @@ class BookControllerIntegrationTests {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String savedBookAsJson = objectMapper.writeValueAsString(savedBook1);
 		
-		mockMvc.perform(MockMvcRequestBuilders.post("/add-book")
+		mockMvc.perform(MockMvcRequestBuilders.post("/add")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(savedBookAsJson)
 				)
 				.andExpect(status().isBadRequest())
-				.andExpect(content().string("Book with the ID " + savedBook1.getBookId() +" exists already."));
+				.andExpect(content().string("Invalid ID : Book with the ID " + savedBook1.getBookId() +" exists already."));
 	}
 	
 	@Test
 	@Order(9)
 	@DisplayName("AddBook - Fails When Title is Duplicate")
 	void testAddBook_failsWhenTitleIsDuplicate() throws Exception{
-		Book bookWithDuplicateTitle = new Book(unSavedBook4.getBookId(), savedBook1.getBookTitle(), savedBook1.getBookSummary(), savedBook1.getBookRating());
+		Book bookWithDuplicateTitle = new Book(unSavedBook4.getBookId(), savedBook1.getTitle(), savedBook1.getSummary(), savedBook1.getRating());
 		ObjectMapper objectMapper = new ObjectMapper();
 		String bookWithDuplicateTitleAsJson = objectMapper.writeValueAsString(bookWithDuplicateTitle);
 		
-		mockMvc.perform(MockMvcRequestBuilders.post("/add-book")
+		mockMvc.perform(MockMvcRequestBuilders.post("/add")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(bookWithDuplicateTitleAsJson)
 				)
 				.andExpect(status().isBadRequest())
-				.andExpect(content().string("Book with the Title: " + savedBook1.getBookTitle() + " exists already."));
+				.andExpect(content().string("Invalid Title : Book with the title : " + savedBook1.getTitle() + " exists already."));
 	}
 	
 	
@@ -197,9 +197,9 @@ class BookControllerIntegrationTests {
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.bookId").value(savedBook1.getBookId()))
-				.andExpect(jsonPath("$.bookTitle").value(savedBook1.getBookTitle()))
-				.andExpect(jsonPath("$.bookSummary").value(savedBook1.getBookSummary()))
-				.andExpect(jsonPath("$.bookRating").value(savedBook1.getBookRating()));
+				.andExpect(jsonPath("$.title").value(savedBook1.getTitle()))
+				.andExpect(jsonPath("$.bookSummary").value(savedBook1.getSummary()))
+				.andExpect(jsonPath("$.bookRating").value(savedBook1.getRating()));
 	}
 	
 	@Test
@@ -208,7 +208,7 @@ class BookControllerIntegrationTests {
 	void testUpdateBookForm_failsWhenBookDoesNotExists() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get("/update-book-form/" + unSavedBook4.getBookId()))
 				.andExpect(status().isNotFound())
-				.andExpect(content().string("Book with the ID " + unSavedBook4.getBookId() + " does not exist."));
+				.andExpect(content().string("Invalid ID : Book with the ID " + unSavedBook4.getBookId() + " does not exist."));
 	}
 	
 	
@@ -222,12 +222,12 @@ class BookControllerIntegrationTests {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String updatedBookJson = objectMapper.writeValueAsString(updatedBook);
 		
-		mockMvc.perform(MockMvcRequestBuilders.put("/update-book/"+bookId)
+		mockMvc.perform(MockMvcRequestBuilders.put("/update/"+bookId)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(updatedBookJson)
 				)
 				.andExpect(status().isOk())
-				.andExpect(content().string("Book Updated Successfully!"));
+				.andExpect(content().string("Book updated successfully!"));
 	}
 	
 	@Test
@@ -237,12 +237,12 @@ class BookControllerIntegrationTests {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String updatedBookJson = objectMapper.writeValueAsString(unSavedBook4);
 		
-		mockMvc.perform(MockMvcRequestBuilders.put("/update-book/"+unSavedBook4.getBookId())
+		mockMvc.perform(MockMvcRequestBuilders.put("/update/"+unSavedBook4.getBookId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(updatedBookJson)
 				)
 				.andExpect(status().isNotFound())
-				.andExpect(content().string("Book with the ID " + unSavedBook4.getBookId() + " does not exist."));
+				.andExpect(content().string("Invalid ID : Book with the ID " + unSavedBook4.getBookId() + " does not exist."));
 	}
 	
 	
@@ -250,17 +250,17 @@ class BookControllerIntegrationTests {
 	@Order(14)
 	@DisplayName("DeleteBook - Succeeds When Book Exists")
 	void testDeleteBook_succeedsWhenBookExists() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.delete("/delete-book/"+savedBook1.getBookId()))
+		mockMvc.perform(MockMvcRequestBuilders.delete("/delete/"+savedBook1.getBookId()))
 				.andExpect(status().isOk())
-				.andExpect(content().string("Book Deleted Successfully!"));
+				.andExpect(content().string("Book deleted successfully!"));
 	}
 	
 	@Test
 	@Order(15)
 	@DisplayName("DeleteBook - Fails When Book Does Not Exists")
 	void testDeleteBook_failsWhenBookDoesNotExists() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.delete("/delete-book/"+unSavedBook4.getBookId()))
+		mockMvc.perform(MockMvcRequestBuilders.delete("/delete/"+unSavedBook4.getBookId()))
 				.andExpect(status().isNotFound())
-				.andExpect(content().string("Book with the ID " + unSavedBook4.getBookId() + " does not exist."));
+				.andExpect(content().string("Invalid ID : Book with the ID " + unSavedBook4.getBookId() + " does not exist."));
 	}
 }

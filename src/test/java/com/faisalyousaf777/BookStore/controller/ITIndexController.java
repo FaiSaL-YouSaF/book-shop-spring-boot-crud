@@ -1,4 +1,4 @@
-package com.faisalyousaf777.BookShop.Controller;
+package com.faisalyousaf777.BookStore.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,14 +13,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class IndexControllerIntegrationTests {
-	
-	@Autowired
-	private MockMvc mockMvc;
-	
-	@Test
-	@DisplayName("HomePage - Should Return Welcome Message")
-	void testHomePage_shouldReturnWelcomeMessage() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get("/")).andExpect(status().isOk()).andExpect(content().string("Welcome to the Home Page."));
-	}
+public class ITIndexController {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Test
+    @DisplayName("HomePage - Should Return Welcome Message")
+    void testHomePage_shouldReturnWelcomeMessage() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                            .get("/api/v1/"))
+                            .andExpect(status().isOk())
+                            .andExpect(content().string("Welcome to the Home Page."));
+    }
 }

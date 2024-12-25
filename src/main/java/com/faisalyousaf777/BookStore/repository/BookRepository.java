@@ -1,6 +1,6 @@
-package com.faisalyousaf777.BookShop.Repository;
+package com.faisalyousaf777.BookStore.repository;
 
-import com.faisalyousaf777.BookShop.Entity.Book;
+import com.faisalyousaf777.BookStore.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-	Optional<Book> findByBookTitle(String bookTitle);
+	Optional<Book> findByTitle(String title);
 }

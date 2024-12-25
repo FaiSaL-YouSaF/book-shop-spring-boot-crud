@@ -1,6 +1,6 @@
-package com.faisalyousaf777.BookShop.Repository;
+package com.faisalyousaf777.BookStore.repository;
 
-import com.faisalyousaf777.BookShop.Entity.Book;
+import com.faisalyousaf777.BookStore.entity.Book;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,22 +26,22 @@ class BookRepositoryUnitTests {
 	
 	
 	@Test
-	void testFindByBookTitle_bookExists() {
+	void testFindByTitle_bookExists() {
 		Book mockedBook = new Book(1L,"Java", "Java for beginners", 5);
-		String bookTitle = mockedBook.getBookTitle();
+		String title = mockedBook.getTitle();
 		
-		Mockito.when(bookRepository.findByBookTitle(bookTitle)).thenReturn(Optional.of(mockedBook));
-		Optional<Book> foundBook = bookRepository.findByBookTitle(bookTitle);
+		Mockito.when(bookRepository.findByTitle(title)).thenReturn(Optional.of(mockedBook));
+		Optional<Book> foundBook = bookRepository.findByTitle(title);
 		
 		assertTrue(foundBook.isPresent());
-		assertThat(bookRepository.findByBookTitle(bookTitle)).isEqualTo(Optional.of(mockedBook));
+		assertThat(bookRepository.findByTitle(title)).isEqualTo(Optional.of(mockedBook));
 	}
 	
 	@Test
-	void testFindByBookTitle_bookDoesNotExists() {
-		String bookTitle = "Title of Book";
+	void testFindByTitle_bookDoesNotExists() {
+		String title = "Title of Book";
 		
-		Optional<Book> nonExistingBookOptional = bookRepository.findByBookTitle(bookTitle);
+		Optional<Book> nonExistingBookOptional = bookRepository.findByTitle(title);
 		
 		assertTrue(nonExistingBookOptional.isEmpty());
 	}

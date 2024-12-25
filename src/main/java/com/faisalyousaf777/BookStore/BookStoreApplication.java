@@ -1,12 +1,12 @@
-package com.faisalyousaf777.BookShop;
+package com.faisalyousaf777.BookStore;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BookShopApplication {
+public class BookStoreApplication {
 	
 	public static void main(String[] args) {
-		SpringApplication.run(BookShopApplication.class, args);
+		SpringApplication.run(BookStoreApplication.class, args);
 	}
 }

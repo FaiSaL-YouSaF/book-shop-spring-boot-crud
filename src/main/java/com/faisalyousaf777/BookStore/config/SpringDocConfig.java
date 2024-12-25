@@ -1,4 +1,4 @@
-package com.faisalyousaf777.BookShop.Config;
+package com.faisalyousaf777.BookStore.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -18,9 +18,9 @@ public class SpringDocConfig {
 	public OpenAPI api() {
 		return new OpenAPI()
 				.info(new Info()
-						.title("BookShop Application")
+						.title("BookStore Application")
 						.description("Developed by Faisal Yousaf as an Assignment Project")
-						.summary("This is a Simple Spring Boot Application for BookShop with CRUD Operations. " +
+						.summary("This is a Simple Spring Boot Application for BookStore with CRUD Operations. " +
 								"I have written Unit and Integration Tests for this application and implemented " +
 								"Swagger OpenAPI 3")
 						.contact(new Contact()

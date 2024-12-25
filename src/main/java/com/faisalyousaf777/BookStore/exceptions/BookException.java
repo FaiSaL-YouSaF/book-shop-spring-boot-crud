@@ -1,8 +1,7 @@
-package com.faisalyousaf777.BookShop.BookExceptions;
+package com.faisalyousaf777.BookStore.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 import java.time.ZonedDateTime;
 
